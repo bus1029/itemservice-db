@@ -37,15 +37,25 @@ class MemoryItemRepository : ItemRepository {
   override fun findAll(cond: ItemSearchCondition): List<Item> {
     val itemName = cond.itemName
     val maxPrice = cond.maxPrice ?: Int.MAX_VALUE
+    return filterStore(itemName, maxPrice)
+  }
+
+  private fun filterStore(
+    itemName: String?,
+    maxPrice: Int
+  ): List<Item> {
     if (ObjectUtils.isEmpty(itemName)) {
-      return store.values.filter {
-        it.price <= maxPrice
-      }
+      return filterStoreToMaxPrice(maxPrice)
     }
 
+    return filterStoreToMaxPrice(maxPrice)
+      .filter {
+        it.itemName.contains(itemName!!)
+      }
+  }
+
+  private fun filterStoreToMaxPrice(maxPrice: Int): List<Item> {
     return store.values.filter {
-      it.itemName.contains(itemName!!)
-    }.filter {
       it.price <= maxPrice
     }
   }
