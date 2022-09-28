@@ -6,20 +6,33 @@ import hello.itemservice.repository.ItemUpdateDto
 import hello.itemservice.repository.memory.MemoryItemRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.TransactionStatus
+import org.springframework.transaction.support.DefaultTransactionDefinition
 
 @SpringBootTest
 class ItemRepositoryTest {
   @Autowired
   private lateinit var itemRepository: ItemRepository
+  @Autowired
+  private lateinit var transactionManager: PlatformTransactionManager
+  private lateinit var status: TransactionStatus
+
+  @BeforeEach
+  fun beforeEach() {
+    status = transactionManager.getTransaction(DefaultTransactionDefinition())
+  }
 
   @AfterEach
   fun destroy() {
     if (itemRepository is MemoryItemRepository) {
       (itemRepository as MemoryItemRepository).clearStore()
     }
+    transactionManager.rollback(status)
   }
 
   @Test
