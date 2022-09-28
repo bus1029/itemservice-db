@@ -12,27 +12,20 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.TransactionStatus
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.support.DefaultTransactionDefinition
 
 @SpringBootTest
+@Transactional
 class ItemRepositoryTest {
   @Autowired
   private lateinit var itemRepository: ItemRepository
-  @Autowired
-  private lateinit var transactionManager: PlatformTransactionManager
-  private lateinit var status: TransactionStatus
-
-  @BeforeEach
-  fun beforeEach() {
-    status = transactionManager.getTransaction(DefaultTransactionDefinition())
-  }
 
   @AfterEach
   fun destroy() {
     if (itemRepository is MemoryItemRepository) {
       (itemRepository as MemoryItemRepository).clearStore()
     }
-    transactionManager.rollback(status)
   }
 
   @Test
