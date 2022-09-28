@@ -24,18 +24,6 @@ class ItemServiceApplication {
   fun testDataInit(itemRepository: ItemRepository): TestDataInit {
     return TestDataInit(itemRepository)
   }
-
-  @Bean
-  @Profile("test")
-  fun dataSource(): DataSource {
-    log.info("메모리 데이터베이스 초기화")
-    val dataSource = DriverManagerDataSource()
-    dataSource.setDriverClassName("org.h2.Driver")
-    dataSource.url = "jdbc:h2:mem:db;DB_CLOSE_DELAY=-1"
-    dataSource.username = "sa"
-    dataSource.password = ""
-    return dataSource
-  }
 }
 
 fun main(args: Array<String>) {
